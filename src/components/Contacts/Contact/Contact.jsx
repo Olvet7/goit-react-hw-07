@@ -2,8 +2,8 @@ import { Gi3DMeeple } from "react-icons/gi";
 import { GiPerspectiveDiceSixFacesOne } from "react-icons/gi";
 import css from "../Contact/Contact.module.css";
 import { useDispatch } from "react-redux";
-import { deleteContact } from "../../../redux/contactsSlice";
-
+import { deleteContact } from "../../../redux/contactsOps";
+import toast from "react-hot-toast";
 
 export default function Contact({ contact }) {
   const dispatch = useDispatch();
@@ -21,7 +21,16 @@ export default function Contact({ contact }) {
         </li>
       </ul>
       <button
-        onClick={() => dispatch(deleteContact(contact.id))}
+        onClick={() =>
+          dispatch(deleteContact(contact.id))
+            .unwrap()
+            .then(() => {
+              toast.success("Contact deleted 😁");
+            })
+            .catch(() => {
+              toast.error("Something went wrong... 😥");
+            })
+        }
         className={css.btn}
         type="button"
       >

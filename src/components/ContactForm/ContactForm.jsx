@@ -3,11 +3,10 @@ import { useId } from "react";
 import * as Yup from "yup";
 import css from "./ContactForm.module.css";
 import { useDispatch } from "react-redux";
-import { addContact } from "../../redux/contactsSlice";
-import { nanoid } from "nanoid";
+import { addContact } from "../../redux/contactsOps";
+import toast from "react-hot-toast";
 
-export default function ContactForm () {
-
+export default function ContactForm() {
   const initialValues = {
     name: "",
     number: "",
@@ -15,15 +14,19 @@ export default function ContactForm () {
 
   const dispatch = useDispatch();
 
-  const handleSubmit = (values, actions) => {
-    dispatch(
-      addContact({
-        id: nanoid(),
-        name: values.name,
-        number: values.number,
-      })
-    )
-    actions.resetForm();
+  const handleSubmit = async (values, actions) => {
+    try {
+      await dispatch(
+        addContact({
+          name: values.name,
+          number: values.number,
+        })
+      );
+      actions.resetForm();
+      toast.success("Contact added! 😁")
+    } catch (error) {
+      toast.error("Not add contact")
+    }
   };
 
   const nameFieldId = useId();
@@ -43,7 +46,6 @@ export default function ContactForm () {
       .matches(phoneRegExp, "Invalid phone number")
       .required("Required"),
   });
-
 
   return (
     <Formik
@@ -77,4 +79,3 @@ export default function ContactForm () {
     </Formik>
   );
 }
-
